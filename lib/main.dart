@@ -1,7 +1,5 @@
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,6 +16,8 @@ class MyApp extends StatefulWidget {
   @override
   State<MyApp> createState() => _MyAppState();
 }
+
+int index = 0;
 
 class _MyAppState extends State<MyApp> {
   @override
@@ -63,25 +63,58 @@ class _MyAppState extends State<MyApp> {
           extensions: [darkCustomColors],
         ),
         home: Scaffold(
-          body: Center(
-            child: Container(
+            bottomNavigationBar: NavigationBar(
+              selectedIndex: index,
+              onDestinationSelected: (value) {
+                setState(() {
+                  index = value;
+                });
+              },
+              destinations: const [
+                NavigationDestination(
+                    selectedIcon: Icon(Icons.home),
+                    icon: Icon(Icons.home_outlined),
+                    label: "Home"),
+                NavigationDestination(
+                    selectedIcon: Icon(Icons.bookmark),
+                    icon: Icon(Icons.bookmark_border),
+                    label: "Saved"),
+                NavigationDestination(
+                    selectedIcon: Icon(Icons.settings),
+                    icon: Icon(Icons.settings_outlined),
+                    label: "Settings"),
+              ],
+            ),
+            body: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.grey,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(24),
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: Text(
+                        "Dictionary",
+                        style: TextStyle(fontSize: 36),
+                      ),
                     ),
-                  ),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: TextField(
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: lightColorScheme.primaryFixed,
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ),
-        ),
+            )),
       );
     });
   }
