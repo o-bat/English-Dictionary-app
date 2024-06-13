@@ -1,4 +1,5 @@
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:english_dictionary/screens/details.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
 
@@ -21,6 +22,12 @@ class _HomePageState extends State<HomePage> {
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: TextField(
+                    onSubmitted: (value) {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => Details(
+                                theWord: value,
+                              )));
+                    },
                     keyboardType: TextInputType.emailAddress,
                     decoration: Platform.isAndroid == true
                         ? InputDecoration(
