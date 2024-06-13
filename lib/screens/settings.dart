@@ -1,3 +1,5 @@
+import 'package:dynamic_color/dynamic_color.dart';
+
 import 'package:flutter/material.dart';
 
 class Settings extends StatefulWidget {
@@ -10,6 +12,14 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return DynamicColorBuilder(
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Settings"),
+          ),
+        );
+      },
+    );
   }
 }

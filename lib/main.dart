@@ -5,14 +5,22 @@ import 'package:english_dictionary/screens/settings.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
 
+import 'package:go_router/go_router.dart';
+
 void main() {
   runApp(const MyApp());
 }
 
-CustomColors lightCustomColors = const CustomColors(danger: Color(0xFFE53935));
-CustomColors darkCustomColors = const CustomColors(danger: Color(0xFFEF9A9A));
-const _brandBlue = Color(0xFF1E88E5);
-bool _isDemoUsingDynamicColors = false;
+GoRouter router = GoRouter(routes: [
+  GoRoute(
+    path: "/",
+    builder: (context, state) => const App(),
+  ),
+  GoRoute(
+    path: "/Settings",
+    builder: (context, state) => const Settings(),
+  )
+]);
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -32,7 +40,6 @@ class _MyAppState extends State<MyApp> {
         theme: Platform.isAndroid == true
             ? ThemeData(
                 colorScheme: lightDynamic,
-                extensions: [lightCustomColors],
               )
             : ThemeData(
                 colorScheme: ColorScheme.fromSeed(
@@ -43,7 +50,6 @@ class _MyAppState extends State<MyApp> {
             ? ThemeData(
                 brightness: Brightness.dark,
                 colorScheme: darkDynamic,
-                extensions: [darkCustomColors],
               )
             : ThemeData(
                 brightness: Brightness.dark,
@@ -52,66 +58,53 @@ class _MyAppState extends State<MyApp> {
                   brightness: Brightness.dark,
                 ),
               ),
-        home: Scaffold(
-          bottomNavigationBar: NavigationBar(
-            selectedIndex: index,
-            onDestinationSelected: (value) {
-              setState(() {
-                index = value;
-              });
-            },
-            destinations: const [
-              NavigationDestination(
-                  selectedIcon: Icon(Icons.home),
-                  icon: Icon(Icons.home_outlined),
-                  label: "Home"),
-              NavigationDestination(
-                  selectedIcon: Icon(Icons.bookmark),
-                  icon: Icon(Icons.bookmark_border),
-                  label: "Saved"),
-              NavigationDestination(
-                  selectedIcon: Icon(Icons.settings),
-                  icon: Icon(Icons.settings_outlined),
-                  label: "Settings"),
-            ],
-          ),
-          body: index == 0
-              ? const HomePage()
-              : index == 1
-                  ? const Saved()
-                  : const Settings(),
-        ),
+        home: const App(),
       );
     });
   }
 }
 
-@immutable
-class CustomColors extends ThemeExtension<CustomColors> {
-  const CustomColors({
-    required this.danger,
-  });
-
-  final Color? danger;
+class App extends StatefulWidget {
+  const App({super.key});
 
   @override
-  CustomColors copyWith({Color? danger}) {
-    return CustomColors(
-      danger: danger ?? this.danger,
-    );
-  }
+  State<App> createState() => _AppState();
+}
 
+class _AppState extends State<App> {
   @override
-  CustomColors lerp(ThemeExtension<CustomColors>? other, double t) {
-    if (other is! CustomColors) {
-      return this;
-    }
-    return CustomColors(
-      danger: Color.lerp(danger, other.danger, t),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Dictionary", style: TextStyle(fontSize: 36)),
+        actions: <Widget>[
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const Settings()));
+              },
+              icon: const Icon(Icons.settings))
+        ],
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: index,
+        onDestinationSelected: (value) {
+          setState(() {
+            index = value;
+          });
+        },
+        destinations: const [
+          NavigationDestination(
+              selectedIcon: Icon(Icons.home),
+              icon: Icon(Icons.home_outlined),
+              label: "Home"),
+          NavigationDestination(
+              selectedIcon: Icon(Icons.bookmark),
+              icon: Icon(Icons.bookmark_border),
+              label: "Saved"),
+        ],
+      ),
+      body: index == 0 ? const HomePage() : const Saved(),
     );
-  }
-
-  CustomColors harmonized(ColorScheme dynamic) {
-    return copyWith(danger: danger!.harmonizeWith(dynamic.primary));
   }
 }
