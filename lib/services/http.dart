@@ -4,7 +4,7 @@ import 'package:english_dictionary/models/words.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
-Future<Word> getTheWord(String word) async {
+Future<List<Word>>? getTheWord(String word) async {
   var response = await http
       .get(Uri.parse("https://api.dictionaryapi.dev/api/v2/entries/en/$word"));
   if (response.statusCode == 200) {
@@ -12,5 +12,6 @@ Future<Word> getTheWord(String word) async {
   } else {
     log('Request failed with status: ${response.statusCode}.');
   }
-  return Word.fromJson(response.body as Map<String, dynamic>);
+  var data = wordFromJson(response.body);
+  return data;
 }

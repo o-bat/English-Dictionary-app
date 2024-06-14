@@ -14,18 +14,24 @@ class Details extends StatelessWidget {
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         return FutureBuilder(
             future: getTheWord(theWord),
-            builder: (context, AsyncSnapshot<Word> snapshot) {
-              if (snapshot.hasData) {
+            builder: (context, AsyncSnapshot<List<Word>>? snapshot) {
+              if (snapshot!.hasData) {
                 if (snapshot.data == null) {
                   return const Center(
                     child: Text("Error"),
                   );
                 } else {
-                  return Container();
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: Text(snapshot.data![0].word),
+                    ),
+                  );
                 }
               } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
+                return const Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 );
               }
             });
