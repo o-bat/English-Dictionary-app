@@ -25,6 +25,10 @@ class Details extends StatelessWidget {
                     appBar: AppBar(
                       title: Text(snapshot.data![0].word),
                     ),
+                    body: Center(
+                      child: Text(snapshot
+                          .data![0].meanings[0].definitions[0].definition),
+                    ),
                   );
                 }
               } else {
