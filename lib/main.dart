@@ -6,9 +6,12 @@ import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
 
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main()  {
   runApp(const MyApp());
+
+  
 }
 
 GoRouter router = GoRouter(routes: [
