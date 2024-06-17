@@ -24,6 +24,11 @@ class Details extends StatelessWidget {
                 } else {
                   return Scaffold(
                       appBar: AppBar(
+                        actions: [
+                          IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.bookmark_border))
+                        ],
                         title: Text(snapshot.data![0].word),
                       ),
                       body: Padding(
