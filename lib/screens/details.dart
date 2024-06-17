@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:english_dictionary/services/http.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,7 @@ class Details extends StatelessWidget {
   Details({super.key, required this.theWord});
 
   String theWord;
-
+  final player = AudioPlayer();
   @override
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
@@ -22,14 +23,25 @@ class Details extends StatelessWidget {
                   );
                 } else {
                   return Scaffold(
-                    appBar: AppBar(
-                      title: Text(snapshot.data![0].word),
-                    ),
-                    body: Center(
-                      child: Text(snapshot
-                          .data![0].meanings[0].definitions[0].definition),
-                    ),
-                  );
+                      appBar: AppBar(
+                        title: Text(snapshot.data![0].word),
+                      ),
+                      body: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Text(getPhonetics(snapshot)),
+                                const Spacer(),
+                                getAudios(snapshot)
+                              ],
+                            ),
+                            Text(snapshot
+                                .data![0].meanings[0].definitions[0].definition)
+                          ],
+                        ),
+                      ));
                 }
               } else {
                 return const Scaffold(
