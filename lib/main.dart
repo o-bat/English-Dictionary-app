@@ -6,12 +6,13 @@ import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
 
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
-void main()  {
+void main() async {
+  await Hive.initFlutter();
   runApp(const MyApp());
-
-  
 }
 
 GoRouter router = GoRouter(routes: [

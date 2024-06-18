@@ -28,7 +28,10 @@ class Details extends StatelessWidget {
                         actions: [
                           IconButton(
                               onPressed: () {
-                                SaveTheWords(snapshot.data![0].word);
+                                saveTheWords(
+                                    snapshot.data![0].word,
+                                    snapshot.data![0].meanings[0].definitions[0]
+                                        .definition);
                               },
                               icon: const Icon(Icons.bookmark_border))
                         ],

@@ -1,6 +1,5 @@
 import 'package:english_dictionary/services/local_save.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Saved extends StatefulWidget {
   const Saved({super.key});
@@ -14,15 +13,22 @@ class _SavedState extends State<Saved> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: FutureBuilder(
-            future: getTheWords(),
+            future: getData(),
             builder:
-                (BuildContext context, AsyncSnapshot<List<String>?> snapshot) {
+                (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
               if (snapshot.hasData) {
-                return Scaffold(
-                  body: ListView.builder(
+                return SizedBox(
+                  height: MediaQuery.of(context).size.height / 2,
+                  width: MediaQuery.of(context).size.width / 2,
+                  child: ListView.builder(
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
-                      return null;
+                      return Column(
+                        children: [
+                          Text(snapshot.data![index]["id"]),
+                          Text(snapshot.data![index]["def"]),
+                        ],
+                      );
                     },
                   ),
                 );

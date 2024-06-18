@@ -1,19 +1,26 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive/hive.dart';
 
-void SaveTheWords(String word) async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
+List<dynamic> words = [{}];
+void saveTheWords(String word, String definition) async {
+  var box = await Hive.openBox('savedWords');
 
-  final List<String>? words = prefs.getStringList('words');
+  words.add({"id": word, "def": definition});
 
-  words!.add(word);
-  log(words.toString());
-  await prefs.setStringList('words', words);
+  box.put("words", words);
+
+  var name = box.get('words');
+
+  log(name);
 }
 
-Future<List<String>?> getTheWords() async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  final List<String>? words = prefs.getStringList('words');
-  return words;
+Future<List<dynamic>> getData() async {
+  var box = await Hive.openBox('savedWords');
+
+  List<dynamic> name = box.get('words');
+  log(name.toString());
+  return name;
 }
