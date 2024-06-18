@@ -1,3 +1,5 @@
+/*import 'dart:developer';
+
 import 'package:english_dictionary/services/local_save.dart';
 import 'package:flutter/material.dart';
 
@@ -32,9 +34,59 @@ class _SavedState extends State<Saved> {
                     },
                   ),
                 );
+              }
+              if (snapshot.hasError) {
+                return const Center(child: Text("Looks like a 404"));
               } else {
                 return const Center(child: CircularProgressIndicator());
               }
-            }));
+            }
+            )
+            );
+  }
+}*/
+
+import 'package:english_dictionary/services/local_save.dart';
+import 'package:flutter/material.dart';
+
+class Saved extends StatefulWidget {
+  const Saved({super.key});
+
+  @override
+  State<Saved> createState() => _SavedState();
+}
+
+class _SavedState extends State<Saved> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Saved Words'),
+      ),
+      body: FutureBuilder<List<Map<dynamic, dynamic>>>(
+        future: getData(),
+        builder: (BuildContext context,
+            AsyncSnapshot<List<Map<dynamic, dynamic>>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text("Error loading data"));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text("No saved words found"));
+          } else {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                final word = snapshot.data![index];
+                return ListTile(
+                  title: Text(word["id"]!),
+                  subtitle: Text(word["def"]!),
+                );
+              },
+            );
+          }
+        },
+      ),
+    );
   }
 }
