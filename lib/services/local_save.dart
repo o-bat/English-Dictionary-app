@@ -1,14 +1,20 @@
 import 'dart:async';
 import 'dart:developer';
-
 import 'package:hive/hive.dart';
 
 List<Map<String, String>> words = [];
 
-void saveTheWords(String word, String definition) async {
+Future<void> saveTheWords(String word, String definition) async {
   var box = await Hive.openBox('savedWords');
+  List<Map<dynamic, dynamic>>? words =
+      box.get('words')?.cast<Map<dynamic, dynamic>>() ?? [];
 
+  // Remove any existing word with the same ID
+  words!.removeWhere((item) => item["id"] == word);
+
+  // Add the new word
   words.add({"id": word, "def": definition});
+
   await box.put("words", words);
 
   log('Saved words: ${box.get('words')}');
@@ -25,83 +31,39 @@ Future<List<Map<dynamic, dynamic>>> getData() async {
   return name != null ? List<Map<dynamic, dynamic>>.from(name) : [];
 }
 
-void removeData(String word, String definition) async {
-  var box = await Hive.openBox('savedWords');
-  List<dynamic>? name = box.get('words');
+Future<void> removeData(String word, String definition) async {
+  Box box;
+  try {
+    box = await Hive.openBox('savedWords');
+    List<Map<dynamic, dynamic>>? words =
+        box.get('words')?.cast<Map<dynamic, dynamic>>();
 
-  if (name != null) {
-    name.removeWhere((item) => item["id"] == word && item["def"] == definition);
-    await box.put("words", name);
+    if (words != null) {
+      words.removeWhere(
+          (item) => item["id"] == word && item["def"] == definition);
+      await box.put('words', words);
+    }
+  } catch (e) {
+    log('Error removing data: $e');
   }
-
-  await box.close();
 }
 
 Future<bool> isItOnList(String theWord) async {
-  var box = await Hive.openBox('savedWords');
-  List<dynamic>? name = box.get('words');
-  await box.close();
+  Box box;
+  try {
+    box = await Hive.openBox('savedWords');
+    List<Map<dynamic, dynamic>>? words =
+        box.get('words')?.cast<Map<dynamic, dynamic>>();
 
-  if (name != null) {
-    List<String> wordIds = name.map((item) => item["id"] as String).toList();
-    bool isOnList = wordIds.contains(theWord);
-    log('Is "$theWord" on list: $isOnList');
-    return isOnList;
+    if (words != null) {
+      bool isOnList = words.any((item) => item["id"] == theWord);
+      log('Is "$theWord" on list: $isOnList');
+      return isOnList;
+    }
+  } catch (e) {
+    log('Error checking list: $e');
   }
 
   log('Is "$theWord" on list: false');
   return false;
 }
-
-
-
-
-
-/*import 'dart:async';
-
-import 'dart:developer';
-
-import 'package:hive/hive.dart';
-
-List<dynamic> words = [{}];
-void saveTheWords(String word, String definition) async {
-  var box = await Hive.openBox('savedWords');
-
-  words.add({"id": word, "def": definition});
-
-  box.put("words", words);
-
-  var name = box.get('words');
-
-  log(name);
-}
-
-Future<List<dynamic>> getData() async {
-  var box = await Hive.openBox('savedWords');
-
-  List<dynamic> name = box.get('words');
-  log(name.toString());
-  return name;
-}
-
-void removeData(String word, String definition) async {
-  var box = await Hive.openBox('savedWords');
-  List<dynamic> name = box.get('words');
-
-  name.remove({"id": word, "def": definition});
-
-  box.put("words", name);
-}
-
-Future<bool> isItOnList(String theword) async {
-  var box = await Hive.openBox('savedWords');
-
-  List<dynamic>? name = box.get('words');
-
-  for (var i = 0; i < name!.length; i++) {
-    List<String> words = [];
-    words.add(name[i]["id"]);
-  }
-  log(words.contains(theword).toString());
-  return !words.contains(theword) ? false : true;
-}*/
