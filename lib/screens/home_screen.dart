@@ -10,6 +10,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+TextEditingController controller = TextEditingController();
+
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,9 @@ class _HomePageState extends State<HomePage> {
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: TextField(
+                    controller: controller,
                     onSubmitted: (value) {
+                      controller.clear();
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => Details(
                                 theWord: value,
