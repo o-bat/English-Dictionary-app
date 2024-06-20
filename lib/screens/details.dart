@@ -1,11 +1,10 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:english_dictionary/services/http.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:english_dictionary/models/words.dart';
 import 'package:english_dictionary/services/local_save.dart';
-import 'package:flutter/widgets.dart';
 
 class Details extends StatefulWidget {
   final String theWord;
@@ -20,6 +19,36 @@ bool isPressed = false;
 final player = AudioPlayer();
 
 class _DetailsState extends State<Details> {
+  @override
+  void initState() {
+    super.initState();
+    checkIsPressed();
+  }
+
+  @override
+  void dispose() {
+    player.dispose();
+    super.dispose();
+  }
+
+  Future<void> checkIsPressed() async {
+    bool onList = await isItOnList(widget.theWord);
+    setState(() {
+      isPressed = onList;
+    });
+  }
+
+  Future<void> toggleBookmark(Word word) async {
+    if (isPressed) {
+      await removeData(word.word, word.meanings[0].definitions[0].definition);
+    } else {
+      await saveTheWords(word.word, word.meanings[0].definitions[0].definition);
+    }
+    setState(() {
+      isPressed = !isPressed;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
@@ -54,28 +83,11 @@ class _DetailsState extends State<Details> {
                     appBar: AppBar(
                       actions: [
                         IconButton(
-                            onPressed: () async {
-                              if (await isItOnList(snapshot.data![0].word)) {
-                                setState(() {
-                                  isPressed = true;
-                                });
-                                removeData(
-                                    snapshot.data![0].word,
-                                    snapshot.data![0].meanings[0].definitions[0]
-                                        .definition);
-                              } else {
-                                setState(() {
-                                  isPressed = false;
-                                });
-                                saveTheWords(
-                                    snapshot.data![0].word,
-                                    snapshot.data![0].meanings[0].definitions[0]
-                                        .definition);
-                              }
-                            },
-                            icon: isPressed == true
-                                ? const Icon(Icons.bookmark_outline)
-                                : const Icon(Icons.bookmark))
+                          onPressed: () => toggleBookmark(snapshot.data![0]),
+                          icon: Icon(isPressed
+                              ? Icons.bookmark
+                              : Icons.bookmark_outline),
+                        ),
                       ],
                       title: Text(snapshot.data![0].word),
                     ),
