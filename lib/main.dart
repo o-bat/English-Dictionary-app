@@ -2,6 +2,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:english_dictionary/screens/home_screen.dart';
 import 'package:english_dictionary/screens/saved.dart';
 import 'package:english_dictionary/screens/settings.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
 
@@ -38,33 +39,41 @@ int index = 0;
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return DynamicColorBuilder(
-        builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-      return MaterialApp(
-        theme: Platform.isAndroid == true
-            ? ThemeData(
-                colorScheme: lightDynamic,
-              )
-            : ThemeData(
-                colorScheme: ColorScheme.fromSeed(
-                  seedColor: Colors.green,
-                ),
-              ),
-        darkTheme: Platform.isAndroid == true
-            ? ThemeData(
-                brightness: Brightness.dark,
-                colorScheme: darkDynamic,
-              )
-            : ThemeData(
-                brightness: Brightness.dark,
-                colorScheme: ColorScheme.fromSeed(
-                  seedColor: Colors.green,
-                  brightness: Brightness.dark,
-                ),
-              ),
-        home: const App(),
-      );
-    });
+    return kIsWeb != true
+        ? DynamicColorBuilder(
+            builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+            return MaterialApp(
+              theme: Platform.isAndroid == true
+                  ? ThemeData(
+                      colorScheme: lightDynamic,
+                    )
+                  : ThemeData(
+                      colorScheme: ColorScheme.fromSeed(
+                        seedColor: Colors.green,
+                      ),
+                    ),
+              darkTheme: Platform.isAndroid == true
+                  ? ThemeData(
+                      brightness: Brightness.dark,
+                      colorScheme: darkDynamic,
+                    )
+                  : ThemeData(
+                      brightness: Brightness.dark,
+                      colorScheme: ColorScheme.fromSeed(
+                        seedColor: Colors.green,
+                        brightness: Brightness.dark,
+                      ),
+                    ),
+              home: const App(),
+            );
+          })
+        : MaterialApp(
+            theme: ThemeData(
+                colorSchemeSeed: Colors.green, brightness: Brightness.light),
+            darkTheme: ThemeData(
+                brightness: Brightness.dark, colorSchemeSeed: Colors.green),
+            home: const App(),
+          );
   }
 }
 

@@ -1,6 +1,7 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:english_dictionary/screens/details.dart';
 import 'package:english_dictionary/services/local_save.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
 
@@ -30,106 +31,204 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return DynamicColorBuilder(
-      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        return Scaffold(
-          body: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
+    return kIsWeb != true
+        ? DynamicColorBuilder(
+            builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+              return Scaffold(
+                body: Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: TextField(
-                    controller: controller,
-                    onSubmitted: (value) {
-                      saveThePast(value);
-                      controller.clear();
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(
-                        builder: (context) => Details(
-                          theWord: value,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: TextField(
+                          controller: controller,
+                          onSubmitted: (value) {
+                            saveThePast(value);
+                            controller.clear();
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(
+                              builder: (context) => Details(
+                                theWord: value,
+                              ),
+                            ))
+                                .then((_) {
+                              _loadData();
+                            });
+                          },
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Platform.isAndroid
+                                ? lightDynamic?.secondary ??
+                                    const Color(0x00000000)
+                                : null,
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                          ),
                         ),
-                      ))
-                          .then((_) {
-                        _loadData();
-                      });
-                    },
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Platform.isAndroid
-                          ? lightDynamic?.secondary ?? const Color(0x00000000)
-                          : null,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(24),
                       ),
-                    ),
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 20),
-                  child: Text(
-                    "History",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: FutureBuilder<List<String>>(
-                        future: _futureData,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<List<String>> snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return const Center(
-                                child: Text("Error loading data"));
-                          } else if (!snapshot.hasData ||
-                              snapshot.data!.isEmpty) {
-                            return const Center(
-                                child: Text("It looks empty here"));
-                          } else {
-                            return ListView.builder(
-                              itemCount: snapshot.data!.length,
-                              itemBuilder: (context, index) {
-                                final word = snapshot.data!.reversed.toList();
-                                return Card(
-                                  child: ListTile(
-                                    onTap: () {
-                                      Navigator.of(context)
-                                          .push(
-                                        MaterialPageRoute(
-                                          builder: (context) => Details(
-                                            theWord: word[index],
-                                          ),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 20),
+                        child: Text(
+                          "History",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: FutureBuilder<List<String>>(
+                              future: _futureData,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<String>> snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                } else if (snapshot.hasError) {
+                                  return const Center(
+                                      child: Text("Error loading data"));
+                                } else if (!snapshot.hasData ||
+                                    snapshot.data!.isEmpty) {
+                                  return const Center(
+                                      child: Text("It looks empty here"));
+                                } else {
+                                  return ListView.builder(
+                                    itemCount: snapshot.data!.length,
+                                    itemBuilder: (context, index) {
+                                      final word =
+                                          snapshot.data!.reversed.toList();
+                                      return Card(
+                                        child: ListTile(
+                                          onTap: () {
+                                            Navigator.of(context)
+                                                .push(
+                                              MaterialPageRoute(
+                                                builder: (context) => Details(
+                                                  theWord: word[index],
+                                                ),
+                                              ),
+                                            )
+                                                .then((_) {
+                                              _loadData();
+                                            });
+                                          },
+                                          title: Text(word[index]),
                                         ),
-                                      )
-                                          .then((_) {
-                                        _loadData();
-                                      });
+                                      );
                                     },
-                                    title: Text(word[index]),
-                                  ),
-                                );
+                                  );
+                                }
                               },
-                            );
-                          }
-                        },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          )
+        : Scaffold(
+            body: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextField(
+                      controller: controller,
+                      onSubmitted: (value) {
+                        saveThePast(value);
+                        controller.clear();
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(
+                          builder: (context) => Details(
+                            theWord: value,
+                          ),
+                        ))
+                            .then((_) {
+                          _loadData();
+                        });
+                      },
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Theme.of(context).secondaryHeaderColor,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular(24),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  const Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Text(
+                      "History",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: FutureBuilder<List<String>>(
+                          future: _futureData,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<String>> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return const Center(
+                                  child: Text("Error loading data"));
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return const Center(
+                                  child: Text("It looks empty here"));
+                            } else {
+                              return ListView.builder(
+                                itemCount: snapshot.data!.length,
+                                itemBuilder: (context, index) {
+                                  final word = snapshot.data!.reversed.toList();
+                                  return Card(
+                                    child: ListTile(
+                                      onTap: () {
+                                        Navigator.of(context)
+                                            .push(
+                                          MaterialPageRoute(
+                                            builder: (context) => Details(
+                                              theWord: word[index],
+                                            ),
+                                          ),
+                                        )
+                                            .then((_) {
+                                          _loadData();
+                                        });
+                                      },
+                                      title: Text(word[index]),
+                                    ),
+                                  );
+                                },
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
-    );
+          );
   }
 }
