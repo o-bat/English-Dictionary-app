@@ -25,7 +25,7 @@ Future<void> saveTheWords(String word, String definition) async {
 Future<List<Map<dynamic, dynamic>>> getData() async {
   var box = await Hive.openBox('savedWords');
   List<dynamic>? name = box.get('words');
-  await box.close();
+
 
   log('Retrieved words: $name');
   return name != null ? List<Map<dynamic, dynamic>>.from(name) : [];
