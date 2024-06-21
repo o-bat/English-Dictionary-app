@@ -102,8 +102,48 @@ class _DetailsState extends State<Details> {
                               getAudios(snapshot)
                             ],
                           ),
-                          Text(snapshot
-                              .data![0].meanings[0].definitions[0].definition)
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: snapshot.data![0].meanings.length,
+                              itemBuilder: (context, index) {
+                                return Card(
+                                  child: ListTile(
+                                    title: Text(snapshot
+                                        .data![0].meanings[index].partOfSpeech),
+                                    subtitle: Text(snapshot
+                                        .data![0]
+                                        .meanings[index]
+                                        .definitions[0]
+                                        .definition),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          Card(
+                            child: ListTile(
+                              title: const Text("synonyms"),
+                              subtitle: Text(
+                                  snapshot.data![0].meanings[0].synonyms.isEmpty
+                                      ? "Not Found"
+                                      : snapshot.data![0].meanings[0].synonyms
+                                          .toString()
+                                          .replaceAll("[", "")
+                                          .replaceAll("]", " ")),
+                            ),
+                          ),
+                          Card(
+                            child: ListTile(
+                              title: const Text("antonyms"),
+                              subtitle: Text(
+                                  snapshot.data![0].meanings[0].antonyms.isEmpty
+                                      ? "Not Found"
+                                      : snapshot.data![0].meanings[0].antonyms
+                                          .toString()
+                                          .replaceAll("[", "")
+                                          .replaceAll("]", " ")),
+                            ),
+                          ),
                         ],
                       ),
                     ));
