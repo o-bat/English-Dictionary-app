@@ -1,56 +1,45 @@
-import 'package:dynamic_color/dynamic_color.dart';
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:english_dictionary/services/local_save.dart';
+
+import 'package:english_dictionary/widgets/theme_green.dart';
+
+import 'package:english_dictionary/widgets/util.dart';
+import 'package:flutter/material.dart';
 import 'package:english_dictionary/screens/home_screen.dart';
 import 'package:english_dictionary/screens/saved.dart';
 import 'package:english_dictionary/screens/settings.dart';
-import 'package:english_dictionary/widgets/theme_blue.dart';
-import 'package:english_dictionary/widgets/theme_green.dart';
-import 'package:english_dictionary/widgets/util.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'dart:io' show Platform;
 
-import 'package:go_router/go_router.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart';
-
-ThemeMode themeMode = ThemeMode.system;
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   runApp(const MyApp());
 }
 
-GoRouter router = GoRouter(routes: [
-  GoRoute(
-    path: "/",
-    builder: (context, state) => const App(),
-  ),
-  GoRoute(
-    path: "/Settings",
-    builder: (context, state) => const Settings(),
-  )
-]);
+ValueNotifier<ThemeData> themeNotifier = ValueNotifier(ThemeData.dark());
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-int index = 0;
-
-class _MyAppState extends State<MyApp> {
-  @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = createTextTheme(context, "ABeeZee", "ABeeZee");
-    final brightness = View.of(context).platformDispatcher.platformBrightness;
-    MaterialThemeBlue theme = MaterialThemeBlue(textTheme);
-    return MaterialApp(
-      themeMode: themeMode,
-      theme: brightness == Brightness.light ? theme.light() : theme.dark(),
-      home: const App(),
+    return ValueListenableBuilder<ThemeData>(
+      valueListenable: themeNotifier,
+      builder: (context, theme, _) {
+        TextTheme textTheme = createTextTheme(context, "ABeeZee", "ABeeZee");
+        final brightness = MediaQuery.of(context).platformBrightness;
+
+        MaterialThemeGreen theme = MaterialThemeGreen(textTheme);
+
+        return MaterialApp(
+          theme: brightness == Brightness.light ? theme.light() : theme.dark(),
+          home: const App(),
+        );
+      },
     );
   }
 }
@@ -63,6 +52,8 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+  int index = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,11 +61,13 @@ class _AppState extends State<App> {
         title: const Text("Dictionary", style: TextStyle(fontSize: 36)),
         actions: <Widget>[
           IconButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const Settings()));
-              },
-              icon: const Icon(Icons.settings))
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const Settings()),
+              );
+            },
+            icon: const Icon(Icons.settings),
+          ),
         ],
       ),
       bottomNavigationBar: NavigationBar(
@@ -86,13 +79,15 @@ class _AppState extends State<App> {
         },
         destinations: const [
           NavigationDestination(
-              selectedIcon: Icon(Icons.home),
-              icon: Icon(Icons.home_outlined),
-              label: "Home"),
+            selectedIcon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
           NavigationDestination(
-              selectedIcon: Icon(Icons.bookmark),
-              icon: Icon(Icons.bookmark_border),
-              label: "Saved"),
+            selectedIcon: Icon(Icons.bookmark),
+            icon: Icon(Icons.bookmark_border),
+            label: 'Saved',
+          ),
         ],
       ),
       body: index == 0 ? const HomePage() : const Saved(),

@@ -27,7 +27,9 @@ String getPhonetics(AsyncSnapshot<List<Word>>? snapshot) {
       return snapshot.data![0].phonetics[i].text.toString();
     }
   }
-  return snapshot.data![0].phonetics[0].text.toString();
+  return snapshot.data![0].phonetics.isEmpty
+      ? "Not Found"
+      : snapshot.data![0].phonetics[0].text.toString();
 }
 
 Widget getAudios(AsyncSnapshot<List<Word>>? snapshot) {
@@ -42,4 +44,50 @@ Widget getAudios(AsyncSnapshot<List<Word>>? snapshot) {
   }
 
   return const Spacer();
+}
+
+Widget getSy(AsyncSnapshot<List<Word>>? snapshot) {
+  for (var i = 0; i < snapshot!.data![0].meanings.length; i++) {
+    if (snapshot.data![0].meanings[i].synonyms.isNotEmpty) {
+      return Card(
+        child: ListTile(
+          title: const Text("synonyms"),
+          subtitle: Text(snapshot.data![0].meanings[i].synonyms
+              .toString()
+              .replaceAll("[", "")
+              .replaceAll("]", " ")),
+        ),
+      );
+    }
+  }
+
+  return const Card(
+    child: ListTile(
+      title: Text("synonyms"),
+      subtitle: Text("Not Found"),
+    ),
+  );
+}
+
+Widget getAn(AsyncSnapshot<List<Word>>? snapshot) {
+  for (var i = 0; i < snapshot!.data![0].meanings.length; i++) {
+    if (snapshot.data![0].meanings[i].antonyms.isNotEmpty) {
+      return Card(
+        child: ListTile(
+          title: const Text("antonyms"),
+          subtitle: Text(snapshot.data![0].meanings[i].antonyms
+              .toString()
+              .replaceAll("[", "")
+              .replaceAll("]", " ")),
+        ),
+      );
+    }
+  }
+
+  return const Card(
+    child: ListTile(
+      title: Text("antonyms"),
+      subtitle: Text("Not Found"),
+    ),
+  );
 }

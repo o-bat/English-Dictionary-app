@@ -1,5 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
-import 'package:dynamic_color/dynamic_color.dart';
+
 import 'package:english_dictionary/services/http.dart';
 
 import 'package:flutter/material.dart';
@@ -117,30 +117,8 @@ class _DetailsState extends State<Details> {
                           },
                         ),
                       ),
-                      Card(
-                        child: ListTile(
-                          title: const Text("synonyms"),
-                          subtitle: Text(
-                              snapshot.data![0].meanings[0].synonyms.isEmpty
-                                  ? "Not Found"
-                                  : snapshot.data![0].meanings[0].synonyms
-                                      .toString()
-                                      .replaceAll("[", "")
-                                      .replaceAll("]", " ")),
-                        ),
-                      ),
-                      Card(
-                        child: ListTile(
-                          title: const Text("antonyms"),
-                          subtitle: Text(
-                              snapshot.data![0].meanings[0].antonyms.isEmpty
-                                  ? "Not Found"
-                                  : snapshot.data![0].meanings[0].antonyms
-                                      .toString()
-                                      .replaceAll("[", "")
-                                      .replaceAll("]", " ")),
-                        ),
-                      ),
+                      getSy(snapshot),
+                      getAn(snapshot),
                     ],
                   ),
                 ));
