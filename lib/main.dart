@@ -2,7 +2,8 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:english_dictionary/screens/home_screen.dart';
 import 'package:english_dictionary/screens/saved.dart';
 import 'package:english_dictionary/screens/settings.dart';
-import 'package:english_dictionary/widgets/theme.dart';
+import 'package:english_dictionary/widgets/theme_blue.dart';
+import 'package:english_dictionary/widgets/theme_green.dart';
 import 'package:english_dictionary/widgets/util.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +46,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     TextTheme textTheme = createTextTheme(context, "ABeeZee", "ABeeZee");
     final brightness = View.of(context).platformDispatcher.platformBrightness;
-    MaterialTheme theme = MaterialTheme(textTheme);
+    MaterialThemeBlue theme = MaterialThemeBlue(textTheme);
     return MaterialApp(
       themeMode: themeMode,
       theme: brightness == Brightness.light ? theme.light() : theme.dark(),
