@@ -51,111 +51,106 @@ class _DetailsState extends State<Details> {
 
   @override
   Widget build(BuildContext context) {
-    return DynamicColorBuilder(
-      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        return FutureBuilder(
-            future: getTheWord(widget.theWord),
-            builder: (context, AsyncSnapshot<List<Word>>? snapshot) {
-              if (snapshot!.hasError) {
-                if (snapshot.hasError) {
-                  return Scaffold(
-                    body: SafeArea(
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text("Word not Found (Looks lika a 404)"),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text("Go Back"))
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                }
-              }
-              if (snapshot.hasData) {
-                return Scaffold(
-                    appBar: AppBar(
-                      actions: [
-                        IconButton(
-                          onPressed: () => toggleBookmark(snapshot.data![0]),
-                          icon: Icon(isPressed
-                              ? Icons.bookmark
-                              : Icons.bookmark_outline),
-                        ),
+    return FutureBuilder(
+        future: getTheWord(widget.theWord),
+        builder: (context, AsyncSnapshot<List<Word>>? snapshot) {
+          if (snapshot!.hasError) {
+            if (snapshot.hasError) {
+              return Scaffold(
+                body: SafeArea(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Word not Found (Looks lika a 404)"),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Go Back"))
                       ],
-                      title: Text(snapshot.data![0].word),
                     ),
-                    body: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
+                  ),
+                ),
+              );
+            }
+          }
+          if (snapshot.hasData) {
+            return Scaffold(
+                appBar: AppBar(
+                  actions: [
+                    IconButton(
+                      onPressed: () => toggleBookmark(snapshot.data![0]),
+                      icon: Icon(
+                          isPressed ? Icons.bookmark : Icons.bookmark_outline),
+                    ),
+                  ],
+                  title: Text(snapshot.data![0].word),
+                ),
+                body: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    children: [
+                      Row(
                         children: [
-                          Row(
-                            children: [
-                              Text(getPhonetics(snapshot)),
-                              const Spacer(),
-                              getAudios(snapshot)
-                            ],
+                          Text(
+                            getPhonetics(snapshot),
+                            style: const TextStyle(fontFamily: ""),
                           ),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: snapshot.data![0].meanings.length,
-                              itemBuilder: (context, index) {
-                                return Card(
-                                  child: ListTile(
-                                    title: Text(snapshot
-                                        .data![0].meanings[index].partOfSpeech),
-                                    subtitle: Text(snapshot
-                                        .data![0]
-                                        .meanings[index]
-                                        .definitions[0]
-                                        .definition),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          Card(
-                            child: ListTile(
-                              title: const Text("synonyms"),
-                              subtitle: Text(
-                                  snapshot.data![0].meanings[0].synonyms.isEmpty
-                                      ? "Not Found"
-                                      : snapshot.data![0].meanings[0].synonyms
-                                          .toString()
-                                          .replaceAll("[", "")
-                                          .replaceAll("]", " ")),
-                            ),
-                          ),
-                          Card(
-                            child: ListTile(
-                              title: const Text("antonyms"),
-                              subtitle: Text(
-                                  snapshot.data![0].meanings[0].antonyms.isEmpty
-                                      ? "Not Found"
-                                      : snapshot.data![0].meanings[0].antonyms
-                                          .toString()
-                                          .replaceAll("[", "")
-                                          .replaceAll("]", " ")),
-                            ),
-                          ),
+                          const Spacer(),
+                          getAudios(snapshot)
                         ],
                       ),
-                    ));
-              } else {
-                return const Scaffold(
-                  body: Center(
-                    child: CircularProgressIndicator(),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: snapshot.data![0].meanings.length,
+                          itemBuilder: (context, index) {
+                            return Card(
+                              child: ListTile(
+                                title: Text(snapshot
+                                    .data![0].meanings[index].partOfSpeech),
+                                subtitle: Text(snapshot.data![0].meanings[index]
+                                    .definitions[0].definition),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Card(
+                        child: ListTile(
+                          title: const Text("synonyms"),
+                          subtitle: Text(
+                              snapshot.data![0].meanings[0].synonyms.isEmpty
+                                  ? "Not Found"
+                                  : snapshot.data![0].meanings[0].synonyms
+                                      .toString()
+                                      .replaceAll("[", "")
+                                      .replaceAll("]", " ")),
+                        ),
+                      ),
+                      Card(
+                        child: ListTile(
+                          title: const Text("antonyms"),
+                          subtitle: Text(
+                              snapshot.data![0].meanings[0].antonyms.isEmpty
+                                  ? "Not Found"
+                                  : snapshot.data![0].meanings[0].antonyms
+                                      .toString()
+                                      .replaceAll("[", "")
+                                      .replaceAll("]", " ")),
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              }
-            });
-      },
-    );
+                ));
+          } else {
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+        });
   }
 }

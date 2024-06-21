@@ -29,52 +29,49 @@ class _SavedState extends State<Saved> {
 
   @override
   Widget build(BuildContext context) {
-    return DynamicColorBuilder(
-        builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-      return Scaffold(
-        body: FutureBuilder<List<Map<dynamic, dynamic>>>(
-          future: _futureData,
-          builder: (BuildContext context,
-              AsyncSnapshot<List<Map<dynamic, dynamic>>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return const Center(child: Text("Error loading data"));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text("No saved words found"));
-            } else {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    final word = snapshot.data![index];
-                    return Card(
-                      child: ListTile(
-                        onTap: () {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(
-                                  builder: (context) => Details(
-                                        theWord: word["id"],
-                                      )))
-                              .then((_) {
-                            // Refresh the state when returning from the Details page
-                            setState(() {
-                              _futureData = getData();
-                            });
+    return Scaffold(
+      body: FutureBuilder<List<Map<dynamic, dynamic>>>(
+        future: _futureData,
+        builder: (BuildContext context,
+            AsyncSnapshot<List<Map<dynamic, dynamic>>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text("Error loading data"));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text("No saved words found"));
+          } else {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  final word = snapshot.data![index];
+                  return Card(
+                    child: ListTile(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(
+                                builder: (context) => Details(
+                                      theWord: word["id"],
+                                    )))
+                            .then((_) {
+                          // Refresh the state when returning from the Details page
+                          setState(() {
+                            _futureData = getData();
                           });
-                        },
-                        title: Text(word["id"]!),
-                        subtitle: Text(word["def"]!),
-                      ),
-                    );
-                  },
-                ),
-              );
-            }
-          },
-        ),
-      );
-    });
+                        });
+                      },
+                      title: Text(word["id"]!),
+                      subtitle: Text(word["def"]!),
+                    ),
+                  );
+                },
+              ),
+            );
+          }
+        },
+      ),
+    );
   }
 }

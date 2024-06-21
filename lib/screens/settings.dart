@@ -12,14 +12,10 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
-    return DynamicColorBuilder(
-      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text("Settings"),
-          ),
-        );
-      },
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Settings"),
+      ),
     );
   }
 }
