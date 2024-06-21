@@ -17,8 +17,6 @@ Future<void> saveTheWords(String word, String definition) async {
 
   await box.put("words", words);
 
-  log('Saved words: ${box.get('words')}');
-
   await box.close();
 }
 
@@ -26,8 +24,6 @@ Future<List<Map<dynamic, dynamic>>> getData() async {
   var box = await Hive.openBox('savedWords');
   List<dynamic>? name = box.get('words');
 
-
-  log('Retrieved words: $name');
   return name != null ? List<Map<dynamic, dynamic>>.from(name) : [];
 }
 
@@ -64,6 +60,22 @@ Future<bool> isItOnList(String theWord) async {
     log('Error checking list: $e');
   }
 
-  log('Is "$theWord" on list: false');
   return false;
+}
+
+Future<void> saveThePast(String word) async {
+  var box = await Hive.openBox('savedWords');
+  List<String> words = List<String>.from(box.get('Past') ?? []);
+
+  // Add the new word
+  words.add(word);
+
+  await box.put("Past", words);
+}
+
+Future<List<String>> getPastData() async {
+  var box = await Hive.openBox('savedWords');
+  List<String> words = List<String>.from(box.get('Past') ?? []);
+
+  return words;
 }

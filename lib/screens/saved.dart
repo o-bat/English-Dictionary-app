@@ -43,28 +43,33 @@ class _SavedState extends State<Saved> {
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const Center(child: Text("No saved words found"));
             } else {
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  final word = snapshot.data![index];
-                  return ListTile(
-                    onTap: () {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(
-                              builder: (context) => Details(
-                                    theWord: word["id"],
-                                  )))
-                          .then((_) {
-                        // Refresh the state when returning from the Details page
-                        setState(() {
-                          _futureData = getData();
-                        });
-                      });
-                    },
-                    title: Text(word["id"]!),
-                    subtitle: Text(word["def"]!),
-                  );
-                },
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    final word = snapshot.data![index];
+                    return Card(
+                      child: ListTile(
+                        onTap: () {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(
+                                  builder: (context) => Details(
+                                        theWord: word["id"],
+                                      )))
+                              .then((_) {
+                            // Refresh the state when returning from the Details page
+                            setState(() {
+                              _futureData = getData();
+                            });
+                          });
+                        },
+                        title: Text(word["id"]!),
+                        subtitle: Text(word["def"]!),
+                      ),
+                    );
+                  },
+                ),
               );
             }
           },
