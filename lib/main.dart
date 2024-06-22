@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:english_dictionary/screens/home_screen.dart';
 import 'package:english_dictionary/screens/saved.dart';
 import 'package:english_dictionary/screens/settings.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,26 +21,26 @@ void main() async {
   runApp(const MyApp());
 }
 
-ValueNotifier<ThemeData> themeNotifier = ValueNotifier(ThemeData.dark());
+var brightness =
+    SchedulerBinding.instance.platformDispatcher.platformBrightness;
+bool isDarkMode = brightness == Brightness.dark;
+bool useDevice = true;
+ThemeMode themeMode = ThemeMode.system;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeData>(
-      valueListenable: themeNotifier,
-      builder: (context, theme, _) {
-        TextTheme textTheme = createTextTheme(context, "ABeeZee", "ABeeZee");
-        final brightness = MediaQuery.of(context).platformBrightness;
+    TextTheme textTheme = createTextTheme(context, "ABeeZee", "ABeeZee");
+    final brightness = MediaQuery.of(context).platformBrightness;
 
-        MaterialThemeGreen theme = MaterialThemeGreen(textTheme);
-
-        return MaterialApp(
-          theme: brightness == Brightness.light ? theme.light() : theme.dark(),
-          home: const App(),
-        );
-      },
+    MaterialThemeGreen theme = MaterialThemeGreen(textTheme);
+    return MaterialApp(
+      theme: theme.light(),
+      darkTheme: theme.dark(),
+      themeMode: themeMode,
+      home: const App(),
     );
   }
 }

@@ -20,7 +20,17 @@ class _SettingsState extends State<Settings> {
         title: const Text("Settings"),
       ),
       body: const Column(
-        children: [],
+        children: [
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Card(
+              child: ListTile(
+                title: Text("Color Theme"),
+
+              )
+            ),
+          ),
+        ],
       ),
     );
   }
