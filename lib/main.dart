@@ -13,7 +13,6 @@ import 'package:english_dictionary/screens/settings.dart';
 import 'package:flutter/scheduler.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

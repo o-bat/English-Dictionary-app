@@ -53,6 +53,7 @@ class _HomePageState extends State<HomePage> {
                   });
                 },
                 decoration: InputDecoration(
+                  hintText: "Search",
                   filled: true,
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
