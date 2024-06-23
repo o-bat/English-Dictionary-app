@@ -1,7 +1,7 @@
 import 'package:english_dictionary/components/adapter.dart';
 import 'package:english_dictionary/components/provider.dart';
 import 'package:english_dictionary/components/theme_green.dart';
-import 'package:english_dictionary/components/util.dart';
+
 import 'package:english_dictionary/screens/home_screen.dart';
 import 'package:english_dictionary/screens/saved.dart';
 import 'package:english_dictionary/screens/settings.dart';
@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
- // Import the adapter
+// Import the adapter
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +17,11 @@ void main() async {
 
   // Register the adapter
   Hive.registerAdapter(ThemeModeAdapter());
+
+  Hive.registerAdapter(DarkColorMode());
+  Hive.registerAdapter(LightColorMode());
+    
+
 
   runApp(const MyApp());
 }
@@ -26,20 +31,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = createTextTheme(context, "ABeeZee", "ABeeZee");
-    MaterialThemeGreen theme = MaterialThemeGreen(textTheme);
+    MaterialThemeGreen theme = const MaterialThemeGreen();
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<SettingsProvider>(
-          create: (context) => SettingsProvider(mode: ThemeMode.system),
+        ChangeNotifierProvider(
+          create: (context) => ColorThemeProviderDark(data: theme.dark()),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ColorThemeProviderLight(data: theme.light()),
+        ),
+        ChangeNotifierProvider<ThemeModeProvider>(
+          create: (context) => ThemeModeProvider(mode: ThemeMode.system),
         ),
       ],
-      child: Consumer<SettingsProvider>(
+      child: Consumer<ThemeModeProvider>(
         builder: (context, settingsProvider, child) {
           return MaterialApp(
-            theme: theme.light(),
-            darkTheme: theme.dark(),
+            theme: context.watch<ColorThemeProviderLight>().data,
+            darkTheme: context.watch<ColorThemeProviderDark>().data,
             themeMode: settingsProvider.mode,
             home: const App(),
           );
@@ -48,7 +58,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 
 class App extends StatefulWidget {
   const App({super.key});
