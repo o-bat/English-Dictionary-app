@@ -1,30 +1,25 @@
-import 'dart:convert';
-import 'dart:developer';
-
-import 'package:english_dictionary/services/local_save.dart';
-
-import 'package:english_dictionary/widgets/theme_green.dart';
-
-import 'package:english_dictionary/widgets/util.dart';
-import 'package:flutter/material.dart';
+import 'package:english_dictionary/components/adapter.dart';
+import 'package:english_dictionary/components/provider.dart';
+import 'package:english_dictionary/components/theme_green.dart';
+import 'package:english_dictionary/components/util.dart';
 import 'package:english_dictionary/screens/home_screen.dart';
 import 'package:english_dictionary/screens/saved.dart';
 import 'package:english_dictionary/screens/settings.dart';
-import 'package:flutter/scheduler.dart';
-
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+ // Import the adapter
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+
+  // Register the adapter
+  Hive.registerAdapter(ThemeModeAdapter());
+
   runApp(const MyApp());
 }
-
-var brightness =
-    SchedulerBinding.instance.platformDispatcher.platformBrightness;
-bool isDarkMode = brightness == Brightness.dark;
-bool useDevice = true;
-ThemeMode themeMode = ThemeMode.system;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -32,17 +27,28 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = createTextTheme(context, "ABeeZee", "ABeeZee");
-    final brightness = MediaQuery.of(context).platformBrightness;
-
     MaterialThemeGreen theme = MaterialThemeGreen(textTheme);
-    return MaterialApp(
-      theme: theme.light(),
-      darkTheme: theme.dark(),
-      themeMode: themeMode,
-      home: const App(),
+
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SettingsProvider>(
+          create: (context) => SettingsProvider(mode: ThemeMode.system),
+        ),
+      ],
+      child: Consumer<SettingsProvider>(
+        builder: (context, settingsProvider, child) {
+          return MaterialApp(
+            theme: theme.light(),
+            darkTheme: theme.dark(),
+            themeMode: settingsProvider.mode,
+            home: const App(),
+          );
+        },
+      ),
     );
   }
 }
+
 
 class App extends StatefulWidget {
   const App({super.key});

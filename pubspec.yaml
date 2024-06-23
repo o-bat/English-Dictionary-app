@@ -43,6 +43,7 @@ dependencies:
   google_fonts: ^6.2.1
   shared_preferences: ^2.2.3
   flutter_launcher_icons: ^0.13.1
+  provider: ^6.1.2
 
 #flutter_launcher_icons:
 #  image_path: "assets/images/icon-128x128.png"

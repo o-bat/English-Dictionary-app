@@ -85,12 +85,12 @@ class _HomePageState extends State<HomePage> {
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return const Center(child: Text("It looks empty here"));
                       } else {
-                        return ListView.builder(
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            final word = snapshot.data!.reversed.toList();
-                            return Card(
-                              child: ListTile(
+                        return Card(
+                          child: ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              final word = snapshot.data!.reversed.toList();
+                              return ListTile(
                                 onTap: () {
                                   Navigator.of(context)
                                       .push(
@@ -105,9 +105,9 @@ class _HomePageState extends State<HomePage> {
                                   });
                                 },
                                 title: Text(word[index]),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         );
                       }
                     },
