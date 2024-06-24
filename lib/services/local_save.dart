@@ -1,10 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
-
-import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 List<Map<String, String>> words = [];
 
@@ -67,19 +64,3 @@ Future<bool> isItOnList(String theWord) async {
   return false;
 }
 
-Future<void> saveThePast(String word) async {
-  var box = await Hive.openBox('savedWords');
-  List<String> words = List<String>.from(box.get('Past') ?? []);
-
-  // Add the new word
-  words.add(word);
-
-  await box.put("Past", words);
-}
-
-Future<List<String>> getPastData() async {
-  var box = await Hive.openBox('savedWords');
-  List<String> words = List<String>.from(box.get('Past') ?? []);
-
-  return words;
-}

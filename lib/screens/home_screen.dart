@@ -1,7 +1,9 @@
+import 'package:english_dictionary/components/provider.dart';
 import 'package:english_dictionary/screens/details.dart';
 import 'package:english_dictionary/services/local_save.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,18 +18,6 @@ class _HomePageState extends State<HomePage> {
   Future<List<String>>? _futureData;
 
   @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
-  void _loadData() {
-    setState(() {
-      _futureData = getPastData();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
@@ -40,7 +30,7 @@ class _HomePageState extends State<HomePage> {
               child: TextField(
                 controller: controller,
                 onSubmitted: (value) {
-                  saveThePast(value);
+                  context.read<PastDataProvider>().saveThePast(value);
                   controller.clear();
                   Navigator.of(context)
                       .push(MaterialPageRoute(
@@ -49,7 +39,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ))
                       .then((_) {
-                    _loadData();
+                    Provider.of<PastDataProvider>(context, listen: false)
+                        .getPastData();
                   });
                 },
                 decoration: InputDecoration(
@@ -75,7 +66,7 @@ class _HomePageState extends State<HomePage> {
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: FutureBuilder<List<String>>(
-                    future: _futureData,
+                    future: context.watch<PastDataProvider>().getPastData(),
                     builder: (BuildContext context,
                         AsyncSnapshot<List<String>> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -85,12 +76,12 @@ class _HomePageState extends State<HomePage> {
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return const Center(child: Text("It looks empty here"));
                       } else {
-                        return Card(
-                          child: ListView.builder(
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (context, index) {
-                              final word = snapshot.data!.reversed.toList();
-                              return ListTile(
+                        return ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            final word = snapshot.data!.reversed.toList();
+                            return Card(
+                              child: ListTile(
                                 onTap: () {
                                   Navigator.of(context)
                                       .push(
@@ -101,13 +92,15 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   )
                                       .then((_) {
-                                    _loadData();
+                                    Provider.of<PastDataProvider>(context,
+                                            listen: false)
+                                        .getPastData();
                                   });
                                 },
                                 title: Text(word[index]),
-                              );
-                            },
-                          ),
+                              ),
+                            );
+                          },
                         );
                       }
                     },

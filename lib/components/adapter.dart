@@ -11,31 +11,13 @@ class ThemeModeAdapter extends TypeAdapter<ThemeMode> {
 
   @override
   ThemeMode read(BinaryReader reader) {
-    switch (reader.readInt()) {
-      case 0:
-        return ThemeMode.system;
-      case 1:
-        return ThemeMode.light;
-      case 2:
-        return ThemeMode.dark;
-      default:
-        return ThemeMode.system;
-    }
+    final value = reader.readInt();
+    return ThemeMode.values[value]; // Handle unknown values
   }
 
   @override
   void write(BinaryWriter writer, ThemeMode obj) {
-    switch (obj) {
-      case ThemeMode.system:
-        writer.writeInt(0);
-        break;
-      case ThemeMode.light:
-        writer.writeInt(1);
-        break;
-      case ThemeMode.dark:
-        writer.writeInt(2);
-        break;
-    }
+    writer.writeInt(obj.index);
   }
 }
 
@@ -65,8 +47,7 @@ class LightColorMode extends TypeAdapter<ThemeData> {
       (entry) => entry.value() == obj,
       orElse: () => _themeMap.entries.first,
     );
-    writer
-        .writeInt(matchingTheme.key.index ); // Write -1 for unknown themes
+    writer.writeInt(matchingTheme.key.index); // Write -1 for unknown themes
   }
 }
 
@@ -94,7 +75,6 @@ class DarkColorMode extends TypeAdapter<ThemeData> {
       (entry) => entry.value() == obj,
       orElse: () => _themeMap.entries.first,
     );
-    writer
-        .writeInt(matchingTheme.key.index ); // Write -1 for unknown themes
+    writer.writeInt(matchingTheme.key.index); // Write -1 for unknown themes
   }
 }

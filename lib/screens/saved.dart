@@ -1,4 +1,4 @@
-import 'package:dynamic_color/dynamic_color.dart';
+
 import 'package:english_dictionary/screens/details.dart';
 import 'package:english_dictionary/services/local_save.dart';
 import 'package:flutter/material.dart';

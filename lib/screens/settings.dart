@@ -240,6 +240,24 @@ class _SettingsState extends State<Settings> {
                 )
               ]),
             ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "History",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ),
+            Card(
+              child: ListTile(
+                trailing: TextButton(
+                    onPressed: () {
+                      Provider.of<PastDataProvider>(context, listen: false)
+                          .removePastData();
+                    },
+                    child: const Text("Clear")),
+                title: const Text("Clear History"),
+              ),
+            ),
           ],
         ),
       ),

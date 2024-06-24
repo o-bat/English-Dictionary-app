@@ -20,8 +20,6 @@ void main() async {
 
   Hive.registerAdapter(DarkColorMode());
   Hive.registerAdapter(LightColorMode());
-    
-
 
   runApp(const MyApp());
 }
@@ -32,9 +30,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MaterialThemeGreen theme = const MaterialThemeGreen();
+    List<String> data = [];
 
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+            create: (context) => PastDataProvider(past: data)),
         ChangeNotifierProvider(
           create: (context) => ColorThemeProviderDark(data: theme.dark()),
         ),
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
       child: Consumer<ThemeModeProvider>(
         builder: (context, settingsProvider, child) {
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
             theme: context.watch<ColorThemeProviderLight>().data,
             darkTheme: context.watch<ColorThemeProviderDark>().data,
             themeMode: settingsProvider.mode,
@@ -74,16 +76,6 @@ class _AppState extends State<App> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Dictionary", style: TextStyle(fontSize: 36)),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const Settings()),
-              );
-            },
-            icon: const Icon(Icons.settings),
-          ),
-        ],
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: index,
@@ -103,9 +95,18 @@ class _AppState extends State<App> {
             icon: Icon(Icons.bookmark_border),
             label: 'Saved',
           ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.settings),
+            icon: Icon(Icons.settings_outlined),
+            label: 'Settings',
+          ),
         ],
       ),
-      body: index == 0 ? const HomePage() : const Saved(),
+      body: index == 0
+          ? const HomePage()
+          : index == 1
+              ? const Saved()
+              : const Settings(),
     );
   }
 }

@@ -47,7 +47,7 @@ class ColorThemeProviderLight extends ChangeNotifier {
   void _loadThemeMode() async {
     try {
       MaterialThemeGreen theme = const MaterialThemeGreen();
-      var box = await Hive.openBox('LightColorSettings');
+      var box = await Hive.openBox('Settings');
       // Load the saved theme mode or default to system
       data = box.get('ColorThemeLight', defaultValue: theme.light());
       notifyListeners();
@@ -60,7 +60,7 @@ class ColorThemeProviderLight extends ChangeNotifier {
   // Change the theme mode and save it to Hive storage
   void changeThemeMode({required ThemeData newData}) async {
     try {
-      var box = await Hive.openBox('LightColorSettings');
+      var box = await Hive.openBox('Settings');
       data = newData;
       box.put('ColorThemeLight', data);
       notifyListeners();
@@ -81,7 +81,7 @@ class ColorThemeProviderDark extends ChangeNotifier {
   void _loadThemeMode() async {
     try {
       MaterialThemeGreen theme = const MaterialThemeGreen();
-      var box = await Hive.openBox('DarkColorSettings');
+      var box = await Hive.openBox('Settings');
 
       // Load the saved theme mode or default to system
       data = box.get('ColorThemeDark', defaultValue: theme.dark());
@@ -95,7 +95,7 @@ class ColorThemeProviderDark extends ChangeNotifier {
   // Change the theme mode and save it to Hive storage
   void changeThemeMode({required ThemeData newData}) async {
     try {
-      var box = await Hive.openBox('DarkColorSettings');
+      var box = await Hive.openBox('Settings');
       data = newData;
       box.put('ColorThemeDark', data);
       notifyListeners();
@@ -103,5 +103,36 @@ class ColorThemeProviderDark extends ChangeNotifier {
       // Handle errors if necessary
       print('Error saving theme mode: $e');
     }
+  }
+}
+
+class PastDataProvider extends ChangeNotifier {
+  List<String> past;
+  PastDataProvider({required this.past}) {
+    getPastData();
+  }
+
+  Future<void> saveThePast(String word) async {
+    var box = await Hive.openBox('savedWords');
+    List<String> words = List<String>.from(box.get('Past') ?? []);
+
+    // Add the new word
+    words.add(word);
+
+    await box.put("Past", words);
+    notifyListeners();
+  }
+
+  Future<List<String>> getPastData() async {
+    var box = await Hive.openBox('savedWords');
+    List<String> words = List<String>.from(box.get('Past') ?? []);
+
+    return words;
+  }
+
+  void removePastData() async {
+    var box = await Hive.openBox('savedWords');
+    box.clear();
+    notifyListeners();
   }
 }
