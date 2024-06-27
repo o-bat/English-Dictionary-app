@@ -258,6 +258,15 @@ class _SettingsState extends State<Settings> {
                 title: const Text("Clear History"),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Center(
+                child: Text(
+                  "Made by O-bat",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+            )
           ],
         ),
       ),

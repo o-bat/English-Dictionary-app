@@ -113,7 +113,7 @@ class PastDataProvider extends ChangeNotifier {
   }
 
   Future<void> saveThePast(String word) async {
-    var box = await Hive.openBox('savedWords');
+    var box = await Hive.openBox('PastWords');
     List<String> words = List<String>.from(box.get('Past') ?? []);
 
     // Add the new word
@@ -124,14 +124,14 @@ class PastDataProvider extends ChangeNotifier {
   }
 
   Future<List<String>> getPastData() async {
-    var box = await Hive.openBox('savedWords');
+    var box = await Hive.openBox('PastWords');
     List<String> words = List<String>.from(box.get('Past') ?? []);
 
     return words;
   }
 
   void removePastData() async {
-    var box = await Hive.openBox('savedWords');
+    var box = await Hive.openBox('PastWords');
     box.clear();
     notifyListeners();
   }
